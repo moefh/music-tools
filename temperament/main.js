@@ -112,9 +112,10 @@ class Tempering {
 	let desc = IntervalNames.desc(semitones);
 
 	let interval = this.temperament.getInterval(note1, note2);
-	let cents = formatNumber(1200 * Math.log2(interval.value));
+	let ratio = formatNumber(interval.value, 4);
+	let cents = formatNumber(1200 * Math.log2(interval.value), 2);
 	let label = (interval.label !== '') ? `(${interval.label})` : '';
-	this.intervalElement.innerText = `${name1} - ${name2}\n${name}: ${desc}\nRatio: ${formatNumber(interval.value)} ${label}\nCents: ${cents}`;
+	this.intervalElement.innerText = `${name1} - ${name2}\n${name}: ${desc}\nRatio: ${ratio} ${label}\nCents: ${cents}`;
     }
 }
 

@@ -1,12 +1,10 @@
 
-//let numberFormatter = new Intl.NumberFormat('en', {minimumFractionDigits:2, maximumFractionDigits: 2});
-
-function formatNumber(n)
+function formatNumber(n, digits)
 {
-    //return numberFormatter.format(n);
-    let s = Math.round(n * 100).toString(10);
-    while (s.length < 3) s = '0' + s;
-    return s.substring(0, s.length-2) + '.' + s.substring(s.length-2);
+    if (digits === undefined) digits = 3;
+    let s = Math.round(n * Math.pow(10, digits)).toString(10);
+    while (s.length < digits+1) s = '0' + s;
+    return s.substring(0, s.length-digits) + '.' + s.substring(s.length-digits);
 }
 
 class Fraction {
