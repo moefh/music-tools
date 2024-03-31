@@ -1,0 +1,31 @@
+
+.separator {
+    padding-right: 10px;
+}
+
+#main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+#main-header {
+    grid-column: 1/span 2;
+}
+
+#main-help {
+    grid-column: 1/span 2;
+    padding-top: 10px;
+}
+
+#main-circle {
+}
+
+#main-interval {
+    padding-top: 100px;
+}
+
+#interval {
+    font-family: monospace;
+    font-size: 24px;
+    white-space: pre;
+}
