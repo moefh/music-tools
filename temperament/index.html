@@ -4,14 +4,15 @@
 <meta charset="utf-8">
 <title>Temperaments</title>
 <link rel="stylesheet" href="main.css"></head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <body>
 <script src="main.js"></script>
 <script src="circle.js"></script>
 <script src="temperaments.js"></script>
 
 <div id="main">
-  <div id="main-header">
-    Temperament:
+  <div>Temperament:</div>
+  <div>
     <select id="temperament" onchange="set_temperament()">
       <option value="12-tet" selected>12-TET (equal temperament)</option>
       <option value="quarter-comma-meantone">Quarter-comma meantone</option>
@@ -19,8 +20,9 @@
       <option value="five-limit">5-limit tuning (just intonation)</option>
       <option value="seven-limit">7-limit tuning</option>
     </select>
-    <span class="separator">&nbsp;</span>
-    Top note:
+  </div>
+  <div>Top note:</div>
+  <div>
     <select id="root-note" onchange="set_root_note()">
       <option value="0" selected>C</option>
       <option value="1">C♯/D♭</option>
@@ -35,23 +37,19 @@
       <option value="10">A♯/B♭</option>
       <option value="11">B</option>
     </select>
-    <span class="separator">&nbsp;</span>
-    Note order:
+  </div>
+  <div>Note order:</div>
+  <div>
     <select id="note-order" onchange="set_note_order()">
-      <option value="semitones" selected>Semitones</option>
-      <option value="fifths">Fifths</option>
+      <option value="fifths" selected>Fifths</option>
+      <option value="semitones">Semitones</option>
     </select>
   </div>
   <div id="main-help">
     Drag the mouse between notes to see the interval:
   </div>
-  <div id="main-circle">
-    <canvas id="circle-canvas" width="800" height="800"></canvas>
-  </div>
-  <div id="main-interval">
-    <div id="interval"></div>
-  </div>
 </div>
+<canvas id="circle-canvas" width="800" height="800"></canvas>
 
 </body>
 </html>
