@@ -6,13 +6,16 @@ class CircleDisplay {
         drag: "#00aa00",
         high: "#0000cc",
     };
+
+    background = "#ffffff";
+    noteBackground = "#eeeeee";
+    intervalStyle = "#00bbbb";
     
     highNote = null;
     dragNote = null;
     
     constructor(canvas) {
         this.setCanvas(canvas);
-        this.setBackground("#ffffff");
         this.setNoteNames(['?']);
         canvas.addEventListener("mousedown", ev => this.mouseDown(ev));
         canvas.addEventListener("mouseup", ev => this.mouseUp(ev));
@@ -39,21 +42,19 @@ class CircleDisplay {
     }
 
     resizeCanvas() {
-        this.canvas.width = window.innerWidth - 20;
-        this.canvas.height = window.innerHeight - 100;
+        let canvasRect = this.canvas.getBoundingClientRect();
+        this.canvas.width = window.innerWidth - 2*canvasRect.left;
+        this.canvas.height = window.innerHeight - canvasRect.top;
         let w = parseInt(this.canvas.width) || 100;
         let h = parseInt(this.canvas.height) || 100;
         let size = Math.min(w, h);
         this.radius = size * 0.4;
-        this.center = {x:size * 0.5, y:size * 0.5};
+        this.center = { x:size * 0.5, y:size * 0.5 };
         this.noteHeight = size * 0.125;
+        this.textHeight = Math.floor(size/20 * 1.1);
         this.setFont(`${Math.floor(size/20)}px sans`);
     }
 
-    setBackground(background) {
-        this.background = background;
-    }
-    
     setFont(font) {
         this.font = font;
     }
@@ -117,23 +118,29 @@ class CircleDisplay {
         };
     }
 
-    renderNote(note) {
+    renderNote(note, style) {
         let ctx = this.ctx;
         let info = this.getNoteInfo(note);
         let slice = 2 * Math.PI / 12;
         let start = info.angle - slice/2 + info.sep/2;
         let end = info.angle + slice/2 - info.sep/2;
 
-        ctx.beginPath();
-        ctx.arc(this.center.x, this.center.y, this.radius + this.noteHeight/2, start, end, false);
-        ctx.arc(this.center.x, this.center.y, this.radius - this.noteHeight/2, end, start, true);
-        ctx.arc(this.center.x, this.center.y, this.radius + this.noteHeight/2, start, start, false);
-        ctx.stroke();
+        ctx.fillStyle = this.noteBackground;
+        ctx.strokeStyle = style;
+        for (let op of ['fill', 'sroke']) {
+            ctx.beginPath();
+            ctx.arc(this.center.x, this.center.y, this.radius + this.noteHeight/2, start, end, false);
+            ctx.arc(this.center.x, this.center.y, this.radius - this.noteHeight/2, end, start, true);
+            ctx.arc(this.center.x, this.center.y, this.radius + this.noteHeight/2, start, start, false);
+            if (op === 'fill') ctx.fill();
+            else ctx.stroke();
+        }
     }
 
-    renderNoteName(note) {
+    renderNoteName(note, style) {
         let info = this.getNoteInfo(note);
         let name = this.noteNames[note%this.noteNames.length];
+        this.ctx.fillStyle = style;
         this.ctx.fillText(name, info.center.x, info.center.y);
     }
 
@@ -147,7 +154,7 @@ class CircleDisplay {
         let p1 = this.lerpPoint(this.center, info1.center, dist);
         let p2 = this.lerpPoint(this.center, info2.center, dist);
 
-        ctx.strokeStyle = this.noteStyles.high;
+        ctx.strokeStyle = this.intervalStyle;
         ctx.lineCap = "round";
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
@@ -166,18 +173,16 @@ class CircleDisplay {
         ctx.lineCap = "butt";
         ctx.lineWidth = 4;
         for (let note = 0; note < 12; note++) {
+            let style = null;
             if (note === this.dragNote) {
-                ctx.strokeStyle = this.noteStyles.drag;
-                ctx.fillStyle = this.noteStyles.drag;
+                style = this.noteStyles.drag;
             } else if (note === this.highNote) {
-                ctx.strokeStyle = this.noteStyles.high;
-                ctx.fillStyle = this.noteStyles.high;
+                style = this.noteStyles.high;
             } else {
-                ctx.strokeStyle = this.noteStyles.normal;
-                ctx.fillStyle = this.noteStyles.normal;
+                style = this.noteStyles.normal;
             }
-            this.renderNote(note);
-            this.renderNoteName(note);
+            this.renderNote(note, style);
+            this.renderNoteName(note, style);
         }
         if (this.dragNote !== null && this.highNote !== null && this.dragNote !== this.highNote) {
             this.renderNoteArc(this.dragNote, this.highNote);
@@ -195,11 +200,9 @@ class CircleDisplay {
         ctx.textAlign = "center";
         ctx.strokeStyle = this.noteStyles.normal;
         ctx.fillStyle = this.noteStyles.normal;
-        //ctx.strokeRect(x, y, w, h);
         let lines = text.split('\n');
-        console.log("-----");
         for (let i in lines) {
-            ctx.fillText(lines[i], this.center.x, this.center.y + (i-lines.length/2)*20);
+            ctx.fillText(lines[i], this.center.x, this.center.y + (i-lines.length/2)*this.textHeight);
         }
     }
     
@@ -273,10 +276,9 @@ class CircleDisplay {
     touchEnd(ev) {
         ev.preventDefault();
         this.dragNote = null;
+        this.highNote = null;
         this.render();
-        if (this.highNote !== null) {
-            this.handleIntervalChanged(null, null);
-        }
+        this.handleIntervalChanged(null, null);
     }
     
 }
